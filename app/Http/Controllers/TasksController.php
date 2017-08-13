@@ -109,11 +109,18 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
+        
         $task = Task::find($id);
+        
+        if (\Auth::user()->id !== $task->user_id) {
+            return redirect('/');
+        }
 
         return view('tasks.edit', [
             'task' => $task,
         ]);
+        
+        
     }
 
     /**
@@ -125,11 +132,18 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $this->validate($request, [
             'status' => 'required|max:10',   // 追加
         ]);
         
         $task = Task::find($id);
+        
+        if (\Auth::user()->id !== $task->user_id) {
+            return redirect('/');
+        }
+     
+     
         $task->status = $request->status;    // 追加
         $task->content = $request->content;
         $task->save();
@@ -145,7 +159,13 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
+        
         $task = Task::find($id);
+        
+        if (\Auth::user()->id !== $task->user_id) {
+            return redirect('/');
+        }
+        
         $task->delete();
 
         return redirect('/');
